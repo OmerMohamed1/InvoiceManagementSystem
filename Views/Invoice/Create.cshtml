@@ -1,0 +1,200 @@
+﻿@using InvoiceManagementSystem.ViewMoldel
+@model InvoiceViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h3>Add Invoic</h3>
+
+
+<hr />
+<div class="container mt-4">
+    <div class="row">
+
+        @using (Html.BeginForm("Create", "Invoice", FormMethod.Post))
+        {
+            <div class="form-container border rounded p-4 bg-light">
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="invoiceDate" class="form-label">Invoice Date</label>
+                            @Html.TextBoxFor(model => model.InvoiceDate, new { @class = "form-control", id = "invoiceDate" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="form-label">Invoice Items</label>
+                    <div class="table-container border rounded bg-white p-3">
+                        <div class="table-responsive">
+                            <table id="invoice-items-table" class="table table-bordered table-responsive">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Quantity</th>
+                                        <th>Unit Price</th>
+                                        <th>Total Price</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.InvoiceItems.Count; i++)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DropDownListFor(m => m.InvoiceItems[i].ProductId, Model.Products, new { @class = "form-control" })
+                                            </td>
+                                            <td>@Html.TextBoxFor(m => m.InvoiceItems[i].Quantity, new { @class = "form-control", placeholder = "Quantity", type = "number" })</td>
+                                            <td>@Html.TextBoxFor(m => m.InvoiceItems[i].UnitPrice, new { @class = "form-control", placeholder = "Unit Price", type = "number", step = "0.01" })</td>
+                                            <td>@Html.DisplayFor(m => m.InvoiceItems[i].TotalPrice)</td>
+                                            <td>
+                                                <button type="button" onclick="removeRow(this)" class="btn btn-danger">Remove</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            </div>
+                            <button type="button" onclick="addRow()" class="btn btn-primary add-item-btn">Add  Item</button>
+                        </div>
+                    </div>
+                <hr />
+                <div class="form-group mb-4">
+                    <label for="totalAmount" class="form-label">Total Amount: </label>
+                    @Html.DisplayFor(model => model.TotalAmount, new { @class = "form-control-plaintext" })
+                </div>
+
+                <div class="form-group mt-3">
+                    <button type="submit" class="btn btn-primary">Save & Print Invoice</button>
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                    @*<button type="button" class="btn btn-primary" onclick="saveAndPrint()">Save & Print Invoice</button>*@
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+                 function addRow() {
+        var table = document.getElementById("invoice-items-table").getElementsByTagName('tbody')[0];
+        var newRow = table.insertRow(table.rows.length);
+
+        var productCell = newRow.insertCell(0);
+        productCell.innerHTML = '<select name="InvoiceItems[' + (table.rows.length - 1) + '].ProductId" class="form-control">' +
+            '@Html.Raw(string.Join("", Model.Products.Select(p => $"<option value=\"{p.Value}\">{p.Text}</option>"))) ' +
+            '</select>';
+
+        var quantityCell = newRow.insertCell(1);
+        quantityCell.innerHTML = '<input type="number" name="InvoiceItems[' + (table.rows.length - 1) + '].Quantity" class="form-control" placeholder="Quantity" oninput="updateTotalPrice(this)" />';
+
+        var unitPriceCell = newRow.insertCell(2);
+        unitPriceCell.innerHTML = '<input type="number" step="0.01" name="InvoiceItems[' + (table.rows.length - 1) + '].UnitPrice" class="form-control" placeholder="Unit Price" oninput="updateTotalPrice(this)" />';
+
+        var totalPriceCell = newRow.insertCell(3);
+        totalPriceCell.innerHTML = '<span class="total-price">0.00</span>';
+
+        var actionCell = newRow.insertCell(4);
+        actionCell.innerHTML = '<button type="button" onclick="removeRow(this)" class="btn btn-danger">Remove</button>';
+    }
+
+                 function removeRow(button) {
+        var row = button.parentNode.parentNode;
+        row.parentNode.removeChild(row);
+        updateAllTotalPrices();
+    }
+
+                 function updateTotalPrice(element) {
+        var row = element.closest('tr');
+        var quantity = row.querySelector('input[name$=".Quantity"]').value;
+        var unitPrice = row.querySelector('input[name$=".UnitPrice"]').value;
+        var totalPrice = (quantity * unitPrice).toFixed(2);
+        row.querySelector('.total-price').innerText = totalPrice;
+    }
+
+                 function updateAllTotalPrices() {
+        var rows = document.querySelectorAll('#invoice-items-table tbody tr');
+        rows.forEach(function(row) {
+            updateTotalPrice(row);
+        });
+            }
+
+            function saveAndPrint() {
+                var form = document.querySelector('form');
+                var formData = new FormData(form);
+
+                fetch(form.action, {
+                    method: form.method,
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // فتح صفحة الطباعة باستخدام معرف الفاتورة المحفوظة
+                            var printWindow = window.open('/Invoice/PrintInvoiceSmall/' + data.invoiceId, '_blank');
+
+                            // تحقق من إغلاق نافذة الطباعة للانتقال إلى الصفحة الرئيسية
+                            printWindow.onafterprint = function () {
+                                window.location.href = '/';
+                            };
+                        } else {
+                            alert("Error saving invoice");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+
+
+            }
+
+    </script>
+
+}
+
+<style>
+   /* .form-container {
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+        padding: 20px;
+        background-color: #f8f9fa;
+    }
+
+    .table-container {
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+        background-color: #ffffff;
+    }
+
+    .table th, .table td {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .table-primary {
+        background-color: #e9ecef;
+    }
+
+    .form-label {
+        font-weight: bold;
+    }
+
+    .form-control-plaintext {
+        border: 0;
+        background-color: transparent;
+        padding: 0;
+    }
+
+    .date-input {
+        width: 12em;
+    }
+
+    .btn-sm {
+        font-size: 0.875rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.2rem;
+    }*/
+</style>

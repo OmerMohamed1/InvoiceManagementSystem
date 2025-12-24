@@ -1,0 +1,499 @@
+﻿@using InvoiceManagementSystem.Models
+@model IEnumerable<Invoice>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<!-- Modal Add -->
+<div class="modal fade" id="createInvoiceModal" tabindex="-1" aria-labelledby="createInvoiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createInvoiceModalLabel">Create New Invoice</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">   <span aria-hidden="true"></span> </button>
+            </div>
+            <div class="modal-body">
+                <!-- سيتم تحميل النموذج هنا بواسطة AJAX -->
+                <div id="createInvoiceContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="createInvoiceForm" class="btn btn-primary">Save Invoice</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Edit -->
+<div class="modal fade" id="editInvoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="invoiceModalLabel">Edit Invoice</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- سيتم تحميل النموذج هنا بواسطة AJAX -->
+                <div id="editModalContent"></div>
+            </div>
+            <div class="modal-footer">
+
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="editInvoiceForm" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Details Invoice -->
+<div class="modal fade" id="detailsInvoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="invoiceModalLabel">Details Invoice</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- سيتم تحميل النموذج هنا بواسطة AJAX -->
+                <div id="detailsModalContent"></div>
+                
+            </div>
+            <div class="modal-footer">
+
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="printInvoiceBtn"><i class="fas fa-print"></i> Print A4</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Print Invoice -->
+<!--<div class="modal fade" id="invoicePrintModal" tabindex="-1" aria-labelledby="invoicePrintModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="invoicePrintModalLabel">Invoice</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="invoiceModalBody">-->
+<!-- سيتم تحميل محتوى الفاتورة هنا -->
+<!--</div>
+        </div>
+    </div>
+</div>-->
+<!--  IndexPage -->
+<div class="container mt-5">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-gradient text-white d-flex justify-content-between align-items-center">
+
+            <h4 class="mb-0 text-primary">Invoices List</h4>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createInvoiceModal"><i class="fas fa-plus"></i> Add New Invoice</button>
+
+        </div>
+        <div class="card-body">
+            <div id="invoicesTableContainer">
+                @await Html.PartialAsync("_InvoicesTablePartial", Model)
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*<div>
+    <span id="total-amount"></span>
+</div>*@
+
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="/js/DeleteInvoiceSweet.js"></script>
+
+
+    <script>
+    $(document).ready(function () {
+
+        let pageIndex = parseInt('@ViewBag.PageIndex');
+        let pageSize = parseInt('@ViewBag.PageSize');
+        let hasMore = @Json.Serialize(ViewBag.HasMore); // تأكد من أن القيمة إما true أو false
+
+            // دالة لتحديث الجدول باستخدام AJAX
+            function updateTable(pageIndex, pageSize) {
+                console.log('Updating table with pageIndex:', pageIndex, 'and pageSize:', pageSize);
+                $.ajax({
+                    url: '/Invoice/LoadInvoicesPartial',
+                    type: 'GET',
+                    data: { pageIndex: pageIndex, pageSize: pageSize },
+                    success: function (data) {
+                        $('#invoicesTableContainer').html(data);  // تحديث محتوى الجدول بالفواتير الجديدة
+                        // تحديث hasMore بناءً على عدد العناصر المسترجعة
+                        if (data.length < pageSize) {
+                            hasMore = false; // لا توجد بيانات إضافية
+                        } else {
+                            hasMore = true; // هناك بيانات إضافية
+                        }
+                        updatePagination();  // تحديث عناصر التنقل بعد تحميل البيانات
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error updating table:', error);
+                    }
+                });
+            }
+
+            // التعامل مع زر Previous
+            $(document).on('click', '.page-item a[aria-label="Previous"]', function (event) {
+                event.preventDefault(); // منع إعادة التحميل
+                if (pageIndex > 1) {  // التحقق من أن الصفحة الحالية ليست الأولى
+                    pageIndex--;  // تقليل pageIndex
+                    updateTable(pageIndex, pageSize);  // استدعاء دالة التحديث
+                }
+            });
+
+            // التعامل مع زر Next
+            $(document).on('click', '.page-item a[aria-label="Next"]', function (event) {
+                event.preventDefault();
+                if (hasMore) {  // فقط إذا كانت هناك صفحات أخرى
+                    pageIndex++;
+                    updateTable(pageIndex, pageSize);
+                }
+            });
+
+            // التعامل مع أزرار الأرقام
+            $(document).on('click', '.pagination .page-item a', function (event) {
+                event.preventDefault();
+                const clickedPageIndex = parseInt($(this).text());  // الحصول على رقم الصفحة من الزر
+                if (!isNaN(clickedPageIndex)) {  // التحقق من أن القيمة عدد صحيح
+                    pageIndex = clickedPageIndex;  // تحديث pageIndex
+                    updateTable(pageIndex, pageSize);  // استدعاء دالة التحديث
+                }
+            });
+
+            // تحديث التنقل بين الصفحات
+            function updatePagination() {
+                $('.page-item').removeClass('disabled');  // إعادة تفعيل جميع الأزرار
+                if (pageIndex <= 1) {
+                    $('.page-item:first-child').addClass('disabled');  // تعطيل زر "السابق" إذا كانت الصفحة الأولى
+                }
+                if (!hasMore) {
+                    $('.page-item:last-child').addClass('disabled');  // تعطيل زر "التالي" إذا لم يكن هناك المزيد من الصفحات
+                }
+            }
+
+            // استدعاء الدالة لتحديث الجدول أول مرة
+            updateTable(pageIndex, pageSize);
+
+
+
+
+        // إعادة تهيئة زر إضافة العناصر
+        //function reinitializeAddRowButton() {
+        //    $('#addRowButton').off('click').on('click', function () {
+        //        addRow();
+        //    });
+        //}
+
+        // إعادة تعيين النماذج وتفريغ المحتوى عند إغلاق الشاشة
+        $('#createInvoiceModal, #editInvoiceModal').on('hidden.bs.modal', function () {
+            $(this).find('form')[0].reset(); // إعادة تعيين النماذج
+            $('#createInvoiceContent, #editModalContent').html(''); // تفريغ المحتوى
+            $('.modal-backdrop').remove(); // إزالة الخلفية
+            $('body').removeClass('modal-open'); // إزالة class modal-open
+            $('body').css('overflow', ''); // إعادة ضبط overflow
+            $('body').css('padding-right', ''); // إعادة ضبط padding-right
+        });
+
+
+
+                                 //الاضافـة
+        //===================================================================================//
+
+
+        $('#createInvoiceModal').on('show.bs.modal', function () {
+            $.ajax({
+                url: '@Url.Action("Create", "Invoice")',
+                type: 'GET',
+                success: function (data) {
+                    $('#createInvoiceContent').html(data);
+                    //// إعادة تهيئة زر إضافة الصفوف عند فتح النافذة
+                    //reinitializeAddRowButton();
+                },
+                error: function () {
+                    console.error("Failed to load the create invoice form.");
+                }
+            });
+        });
+
+
+               $(document).on('submit', '#createInvoiceForm', function (e) {
+           e.preventDefault();
+
+           $.ajax({
+               url: $(this).attr('action'),
+               type: 'POST',
+               data: $(this).serialize(),
+               success: function (response) {
+                   if (response.success) {
+                       $('#createInvoiceModal').modal('hide');
+                       if (response.message) {
+                           toastr.success(response.message); // عرض رسالة النجاح
+                       }
+                       printInvoiceSmall(response.invoiceId);
+                       updateTable(pageIndex, pageSize);
+                   } else {
+                       alert(response.errorMessage);
+                   }
+               },
+               error: function (xhr, status, error) {
+                   console.error('Error during form submission: ', error);
+                   alert('Error during form submission. Please check the console for details.');
+                       }
+                   });
+
+                   // التأكد من إزالة كافة التأثيرات بشكل إضافي في حال بقاء الجمود
+                   $(document).on('hidden.bs.modal', function () {
+                       $('.modal-backdrop').remove();
+                       $('body').removeClass('modal-open');
+                       $('body').css('overflow', '');
+                       $('body').css('padding-right', '');
+                   });
+               });
+
+
+
+
+
+
+                                        //التعديـــــــل
+        //===================================================================================//
+
+
+        $(document).on('click', '.editInvoiceBtn', function () {
+            var invoiceId = $(this).data('id');
+
+            $.ajax({
+                url: '@Url.Action("Edit", "Invoice")',
+                type: 'GET',
+                data: { id: invoiceId },
+                success: function (data) {
+                    $('#editModalContent').html(data);
+                    $('#editInvoiceModal').modal('show');
+                    //// إعادة تهيئة زر إضافة الصفوف عند فتح النافذة
+                    //reinitializeAddRowButton();
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error loading form: ', error);
+                }
+            });
+        });
+
+
+        $(document).on('submit', '#editInvoiceForm', function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        $('#editInvoiceModal').modal('hide');
+                        if (response.message) {
+                            toastr.success(response.message); // عرض رسالة النجاح
+                        }
+                        updateTable(pageIndex, pageSize);
+                    } else {
+                        alert(response.errorMessage);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error during form submission: ', error);
+                    alert('Error during form submission. Please check the console for details.');
+                }
+            });
+        });
+
+
+                          //Details Invoice
+//===================================================================================//
+
+
+        $(document).on('click', '.detailsInvoiceBtn', function () {
+        var invoiceId = $(this).data('id');
+
+        $.ajax({
+          url: '@Url.Action("Details", "Invoice")',
+            type: 'GET',
+            data: { invoiceId: invoiceId },
+            success: function (data) {
+                $('#detailsModalContent').html(data);
+                $('#detailsInvoiceModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                console.error('Error loading form: ', error);
+            }
+        });
+        });
+
+
+                                 //Print  Invoice size A4
+        //===================================================================================//
+
+        // عند الضغط على زر الطباعة
+        $(document).on('click', '#printInvoiceBtn', function () {
+            printInvoiceA4();
+        });
+
+        function printInvoiceA4() {
+            var printContent = document.getElementById('detailsModalContent').innerHTML;
+
+            var printWindow = window.open('', '_blank');
+            printWindow.document.write('<link rel="stylesheet" href="/css/print-invoice-A4.css" />');
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+            printWindow.focus();
+
+            printWindow.onload = function () {
+                printWindow.print();
+                printWindow.close();
+            };
+
+            $('#detailsModalContent script').remove();
+        }
+
+
+
+                                    //Print Invoice size Small
+        //===================================================================================//
+        // عند الضغط على زر الطباعة
+        $(document).on('click', '#printInvoicSmalleBtn', function () {
+            var invoiceId = $(this).data('id');
+            printInvoiceSmall(invoiceId)
+        });
+
+        function printInvoiceSmall(invoiceId) {
+            $.ajax({
+                url: '/Invoice/PrintInvoiceSmall/' + invoiceId,
+                type: 'GET',
+                success: function (invoiceHtml) {
+                    var printWindow = window.open('', '_blank');
+                    printWindow.document.write(invoiceHtml);
+                    printWindow.document.close();
+
+                    printWindow.onload = function () {
+                        printWindow.focus();
+                        printWindow.print();
+                        printWindow.close();
+                    };
+
+                    window.onafterprint = function () {
+                        updateTable(pageIndex, pageSize);
+                    };
+                },
+                error: function () {
+                    toastr.error('Failed to load invoice for printing.');
+                }
+            });
+        }
+
+        setTimeout(function () {
+            updateTable(pageIndex, pageSize);
+        }, 500);
+
+    });
+
+    </script>
+
+    @*-------------------------------------------------------------------------------------------*@
+
+    <script>
+    // Parse the JSON products from the ViewBag
+    var products = JSON.parse('@Html.Raw(ViewBag.ProductsJson)');
+       
+    function addRow() {
+        var table = document.getElementById("invoice-items-table").getElementsByTagName('tbody')[0];
+        var newRow = table.insertRow(table.rows.length);
+      
+        // Create the product select dropdown
+        var productCell = newRow.insertCell(0);
+        var productSelect = document.createElement("select");
+        productSelect.classList.add("form-control");
+        productSelect.name = "InvoiceItems[" + (table.rows.length - 1) + "].ProductId";
+
+        // Populate the select dropdown with product options
+        products.forEach(function (product) {
+            var option = document.createElement("option");
+            option.value = product.Value;  // استخدم 'Value' بدلاً من 'ProductId'
+            option.text = product.Text;    // استخدم 'Text' بدلاً من 'ProductName'
+            productSelect.appendChild(option);
+        });
+
+
+        productCell.appendChild(productSelect);
+        console.log('productSelect: ', productSelect );
+        // Create quantity input
+        var quantityCell = newRow.insertCell(1);
+        quantityCell.innerHTML = '<input type="number" name="InvoiceItems[' + (table.rows.length - 1) + '].Quantity" class="form-control" placeholder="Quantity" oninput="updateTotalPrice(this)" />';
+
+        // Create unit price input
+        var unitPriceCell = newRow.insertCell(2);
+        unitPriceCell.innerHTML = '<input type="number" step="0.01" name="InvoiceItems[' + (table.rows.length - 1) + '].UnitPrice" class="form-control" placeholder="Unit Price" oninput="updateTotalPrice(this)" />';
+
+        // Create total price display
+        var totalPriceCell = newRow.insertCell(3);
+        totalPriceCell.innerHTML = '<span class="total-price">0.00</span>';
+
+        // Create action button
+        var actionCell = newRow.insertCell(4);
+        actionCell.innerHTML = '<button type="button" onclick="removeRow(this)" class="btn btn-danger">Remove</button>';
+    }
+
+    function removeRow(button) {
+        var row = button.parentNode.parentNode;
+        row.parentNode.removeChild(row);
+        updateAllIndexes();
+        updateAllTotalPrices();
+        updateTotalAmount();
+    }
+
+    function updateTotalPrice(element) {
+        var row = element.closest('tr');
+        var quantity = row.querySelector('input[name$=".Quantity"]').value;
+        var unitPrice = row.querySelector('input[name$=".UnitPrice"]').value;
+        var totalPrice = (quantity * unitPrice).toFixed(2);
+        row.querySelector('.total-price').innerText = totalPrice;
+        updateTotalAmount();
+    }
+
+        function updateTotalAmount() {
+            var totalAmount = 0;
+            var rows = document.querySelectorAll('#invoice-items-table tbody tr');
+
+            rows.forEach(function (row) {
+                var totalPriceElement = row.querySelector('.total-price');
+
+                // تحقق من وجود العنصر قبل الوصول إلى خاصيته
+                if (totalPriceElement) {
+                    var totalPrice = parseFloat(totalPriceElement.innerText);
+                    totalAmount += totalPrice;
+                }
+            });
+
+            var totalAmountElement = document.getElementById("total-amount");
+            if (totalAmountElement) {
+                totalAmountElement.innerText = totalAmount.toFixed(2);
+            }
+        }
+
+
+    </script>
+
+}
+

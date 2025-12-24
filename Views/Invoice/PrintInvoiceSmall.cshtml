@@ -1,0 +1,183 @@
+﻿@using InvoiceManagementSystem.ViewMoldel
+@model InvoiceViewModel
+
+@{
+    ViewData["Title"] = "Invoice Details";
+    Layout = null; // Optional: Removes any layout for cleaner print output
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/css/print-invoice-small.css" rel="stylesheet" />
+</head>
+
+<body class="receipt">
+    <header >
+        <img src="~/images/shopping.png" alt="Company Logo" class="logo" />
+        <div class="header-details">
+            <h3 class=" text-right ">Invoice Details</h3>
+        </div>
+    </header>
+    <hr>
+
+    <p>InvoiceId: @Model.InvoiceId</p>
+    <p>Address : US-new yourk - 289</p>
+    <p>CityIndex:New Yourk </p>
+    <p>Tel: 09888766688</p>
+    <p>Date: @Model.InvoiceDate.ToString("MM/dd/yyyy HH:mm tt")</p>
+    @*<p>Server: @Model.Server</p>
+        <p>Survey code: @Model.SurveyCode</p>*@
+
+    <hr>
+
+    <table table-responsive>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.InvoiceItems)
+            {
+                <tr>
+                    <td>@item.ProductName</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.UnitPrice</td>
+                    <td>@item.TotalPrice</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <hr>
+
+    <p class="total mt-4"><strong>Total Amount:</strong> @Model.TotalAmount</p>
+    @*<p class="total">CASH: @Model.Cash.ToString("C")</p>
+        <p class="total">CHANGE: @Model.Change.ToString("C")</p>*@
+
+    <hr>
+    <div class="form-group ">
+        <img src="@Model.QRCodeImage" alt="QR Code" style="width: 120px; height: 100px; display: block; margin: 10px auto;" />
+    </div>
+    <p  style="text-align: center;">THANK YOU!</p>
+
+    <script>
+     window.onload = function () {
+         window.print();
+     };
+
+     window.onafterprint = function() {
+         window.location.href = '@Url.Action("Index", "Invoice")'; // Navigate to the home page or any other page after printing
+     };
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@*<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8" />
+        <link href="~/css/invoice-print.css" rel="stylesheet" />
+        <title>Invoice @Model.InvoiceId</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 5px;
+                padding: 10px;
+                width: 80mm; /* Match the page size */
+                box-sizing: border-box; /* Include padding in the width */
+            }
+
+            .invoice-info p {
+                margin: 5px 0;
+                font-size: 12px; /* Smaller font size for receipt printers */
+            }
+
+            .invoice-details {
+                width: 100%;
+                /*border-collapse: collapse;*/
+                margin-bottom: 5px;
+            }
+
+                .invoice-details th, .invoice-details td {
+                    /*border: 1px solid #ddd;*/
+                    padding: 4px;
+                    font-size: 10px; /* Smaller font size for receipt printers */
+                    text-align: left;
+                }
+
+                .invoice-details th {
+                    background-color: #f2f2f2;
+                }
+
+            .totals {
+                text-align: right;
+                margin-top: 10px;
+                font-size: 10px; /* Match font size of table for consistency */
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="invoice-info">
+            <p><strong>Invoice Number:</strong> @Model.InvoiceId</p>
+            <p><strong>Date:</strong> @Model.InvoiceDate.ToShortDateString()</p>
+        </div>
+
+        <table class="invoice-details">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.InvoiceItems)
+                {
+                    <tr>
+                        <td>@item.Product.ProductName</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.UnitPrice.ToString("C")</td>
+                        <td>@item.TotalPrice.ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="totals">
+            <div><strong>Total Amount:</strong> @Model.TotalAmount.ToString("C")</div>
+        </div>
+
+        <script>
+            window.onload = function () {
+                window.print();
+            };
+
+            window.onafterprint = function() {
+                window.location.href = '@Url.Action("Index", "Home")'; // Navigate to the home page or any other page after printing
+            };
+        </script>
+    </body>
+    </html>*@

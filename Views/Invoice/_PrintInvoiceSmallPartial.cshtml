@@ -1,0 +1,63 @@
+﻿@using InvoiceManagementSystem.ViewMoldel
+@model InvoiceViewModel
+    <body class="receipt">
+        <div id="invoicePrintContent">
+            <link href="~/css/print-invoice-small.css" rel="stylesheet" />
+
+
+
+            <header>
+                <img src="~/images/shopping.png" alt="Company Logo" class="logo" />
+                <div class="header-details">
+                    <h3 class=" text-right ">Invoice Details</h3>
+                </div>
+            </header>
+            <hr>
+
+            <p>InvoiceId: @Model.InvoiceId</p>
+            <p>Address : US-new yourk - 289</p>
+            <p>CityIndex:New Yourk </p>
+            <p>Tel: 09888766688</p>
+            <p>Date: @Model.InvoiceDate.ToString("MM/dd/yyyy HH:mm tt")</p>
+            @*<p>Server: @Model.Server</p>
+                <p>Survey code: @Model.SurveyCode</p>*@
+
+            <hr>
+
+            <table table-responsive>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Qty</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.InvoiceItems)
+                    {
+                        <tr>
+                            <td>@item.ProductName</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.UnitPrice</td>
+                            <td>@item.TotalPrice</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <hr>
+
+            <p class="total mt-4"><strong>Total Amount:</strong> @Model.TotalAmount</p>
+            @*<p class="total">CASH: @Model.Cash.ToString("C")</p>
+                <p class="total">CHANGE: @Model.Change.ToString("C")</p>*@
+
+            <hr>
+            <div class="form-group ">
+                <img src="@Model.QRCodeImage" alt="QR Code" style="width: 120px; height: 100px; display: block; margin: 10px auto;" />
+            </div>
+            <p style="text-align: center;">THANK YOU!</p>
+
+
+    </div>
+    </body>

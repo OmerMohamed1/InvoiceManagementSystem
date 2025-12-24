@@ -1,0 +1,88 @@
+﻿@using InvoiceManagementSystem.ViewMoldel
+@model InvoiceViewModel
+
+@{
+    ViewData["Title"] = "Invoice Details";
+}
+
+@*<link href="~/css/print-invoice-A4.css" rel="stylesheet" />*@
+
+@*<div class="invoice-container ">
+
+    <div class="invoice-header">
+        <div >
+            <img src="~/images/shopping.png" alt="Company Logo" class="qr-code-image" />
+        </div>
+        <div class="text-center code">
+            <h4>Invoice</h4>
+        </div>
+        <div class="qr-code">
+            <img src="@Model.QRCodeImage" alt="QR Code" class="qr-code-image" />
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="invoice-details col-12">
+        <div class="col-6">
+            <p><strong>Invoice Number:</strong> @Model.InvoiceId</p>
+            <p><strong>Invoice Date:</strong> @Model.InvoiceDate.ToString("dd-MM-yyyy")</p>
+            <p><strong>Address:</strong> US-new york - 289</p>
+        </div>
+        <div class="col-6">
+            <p><strong>City:</strong> New York</p>
+            <p><strong>Tel:</strong> 09888766688</p>
+        </div>
+    </div>*@
+
+    <div class="invoice-items">
+        <h4>Items</h4>
+        <table class="table table-bordered table-responsive">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th class="text-center">Quantity</th>
+                    <th class="text-center">Unit Price</th>
+                    <th class="text-center">Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.InvoiceItems)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.ProductName)</td>
+                        <td class="text-center">@Html.DisplayFor(modelItem => item.Quantity)</td>
+                        <td class="text-center">@Html.DisplayFor(modelItem => item.UnitPrice)</td>
+                        <td class="text-center">@Html.DisplayFor(modelItem => item.TotalPrice)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="totals">
+        <p><strong>Total Amount:</strong> @Model.TotalAmount</p>
+    </div>
+
+    <p style="text-align: center; font-size: 1.2em; margin-top: 20px;">THANK YOU!</p>
+
+    <div class="invoice-footer text-center">
+        <hr />
+        <a asp-action="Index" class="btn btn-secondary mx-2 mb-2">Back to List</a>
+
+        @*<a asp-action="Edit" asp-route-id="@Model?.InvoiceId" class="btn btn-primary mx-2 mb-1">Edit</a>*@
+
+        <a href="@Url.Action("PrintInvoiceSmall", "Invoice", new { invoiceId = Model.InvoiceId })" class="btn btn-info mx-2 mb-2">Print Invoice MINI</a>
+
+        <button onclick="window.print()" class="btn btn-success mx-2 mb-2">Print Invoice A4</button>
+    </div>
+@*</div>*@
+
+   
+    @*<style>
+        /* Reducing the spacing between the paragraphs in invoice details */
+        .invoice-details p {
+            margin-bottom: 5px !important; /* Enforce margin reduction */
+            line-height: 1.2 !important; /* Reduce space between lines */
+        }
+    </style>*@

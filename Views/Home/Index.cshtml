@@ -1,0 +1,116 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<div class="container mt-5">
+    <div class="row">
+
+        <!-- Today Invoices Box -->
+        <div class="col-lg-4 col-md-6 col-12 mb-4">
+            <div class="card text-black bg-white shadow-lg h-100">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3>@ViewBag.TodayInvoiceCounts</h3>
+                            <p>Today Invoices</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-file-invoice-dollar fa-4x"></i>
+                        </div>
+                    </div>
+                    <a href="/Invoice/Index" class="btn-custom mt-3 d-block text-center">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- All Invoices Box -->
+        <div class="col-lg-4 col-md-6 col-12 mb-4">
+            <div class="card text-black bg-white shadow-lg h-100">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3>@ViewBag.InvoiceCounts</h3>
+                            <p>All Invoices</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-file-invoice-dollar fa-4x"></i>
+                        </div>
+                    </div>
+                    <a href="/Invoice/Index" class="btn-custom mt-3 d-block text-center">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- All Products Box -->
+        <div class="col-lg-4 col-md-6 col-12 mb-4">
+            <div class="card text-black bg-white shadow-lg h-100">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3>@ViewBag.ProductCounts</h3>
+                            <p>All Products</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-box-open fa-4x"></i>
+                        </div>
+                    </div>
+                    <a href="/Product/Index" class="btn-custom mt-3 d-block text-center">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 15px;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+    .icon {
+        opacity: 0.2;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .card:hover .icon {
+        opacity: 0.7;
+    }
+
+    .icon i {
+        font-size: 5rem;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .card:hover .icon i {
+        transform: scale(1.1);
+    }
+
+    .btn-custom {
+        background-color: #ffffff;
+        color: #17a2b8;
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 50px;
+        border: 2px solid transparent;
+        transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+        .btn-custom:hover {
+            background-color: #17a2b8;
+            color: #ffffff;
+            box-shadow: 0 8px 16px rgba(23, 162, 184, 0.4);
+        }
+
+        .btn-custom i {
+            margin-left: 10px;
+        }
+</style>

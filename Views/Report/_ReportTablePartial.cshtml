@@ -1,0 +1,55 @@
+﻿@using InvoiceManagementSystem.ViewMoldel
+@model IEnumerable<ReportViewMoldel>
+
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead class="thead-custom">
+            <tr>
+                <th>
+                    Invoice Date
+                </th>
+                <th>
+                    Product Name
+                </th>
+                <th>
+                    Unit Price
+                </th>
+                <th>
+                    Quantity
+                </th>
+                <th>
+                    Total Price
+                </th>
+                @*<th>
+                        @Html.DisplayNameFor(model => model.TotalAmount)
+                    </th>*@
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.InvoiceDate.ToString("dd-MM-yyyy")
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProductName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UnitPrice)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Quantity)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TotalPrice)
+                    </td>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.TotalAmount)
+                        </td>*@
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

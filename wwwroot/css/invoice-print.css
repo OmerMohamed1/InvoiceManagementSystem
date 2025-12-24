@@ -1,0 +1,247 @@
+﻿/* invoice-print.css */
+
+/*.invoice-container {
+    font-family: Arial, sans-serif;
+}*/
+
+/* قواعد CSS للطباعة */
+/*@media print {
+    .print-large {
+        display: block;
+        font-size: 12pt;
+        width: 210mm;*/ /* A4 width */
+/*margin: 0;
+        padding: 15mm;
+    }
+
+    .print-small {
+        display: none;*/ /* غير مرئي للطباعة الكبيرة */
+/*font-size: 8pt;
+        width: 58mm;*/ /* Receipt size */
+/*margin: 0;
+        padding: 5mm;
+    }
+}
+
+@media screen {
+    .print-large {
+        display: none;*/ /* غير مرئي على الشاشة */
+/*}
+
+    .print-small {
+        display: none;*/ /* غير مرئي على الشاشة */
+/*}
+}*/
+
+/* invoice-print.css */
+
+/* قاعدة للطباعة فقط */
+/*@media print {*/
+/* إعدادات لحجم A4 */
+/*.print-large {
+        display: block;
+        font-size: 12pt;
+        width: 210mm;*/ /* A4 width */
+/*margin: 0;
+        padding: 15mm;
+    }*/
+
+/* إعدادات لحجم صغير */
+/*.print-small {
+        display: none;*/ /* غير مرئي للطباعة الكبيرة */
+/*font-size: 8pt;
+        width: 58mm;*/ /* Receipt size */
+/*margin: 0;
+        padding: 5mm;
+    }
+}
+
+@media screen {*/
+/* جعل الحجم الكبير مرئي فقط على الشاشة */
+/*.print-large {
+        display: block;
+    }*/
+
+/* جعل الحجم الصغير مرئي فقط على الشاشة */
+/*.print-small {
+        display: none;
+    }
+}*/
+/*body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+}
+
+.invoice-header, .invoice-footer {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+    .invoice-header h1 {
+        margin: 0;
+        font-size: 24px;
+    }
+
+.invoice-details {
+    margin-bottom: 20px;
+}
+
+    .invoice-details p {
+        margin: 5px 0;
+        font-size: 16px;
+    }
+
+.invoice-items {
+    margin-bottom: 20px;
+}
+
+    .invoice-items p {
+        margin: 5px 0;
+        font-size: 16px;
+    }
+
+.invoice-summary {
+    text-align: right;
+    margin-top: 20px;
+    font-size: 18px;
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin: 20px 0;
+    background-color: #007bff;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+@media print {
+    body {
+        margin: 0;
+        padding: 0;
+        border: none;
+    }
+
+    .btn {
+        display: none;
+    }
+
+    @page {
+        margin: 10mm;
+        size: A4 portrait;
+    }
+}*/
+
+
+/*body {
+    width: 500px;*/ /* عرض الصفحة 500 بكسل */
+/*margin: auto;*/ /* توسيط الصفحة */
+/*font-family: Arial, sans-serif;
+    font-size: 14px;*/ /* حجم الخط مناسب */
+/*border: 1px solid #ccc;*/ /* لإضافة إطار */
+/*padding: 20px;
+}*/
+
+/*.invoice-container {
+    width: 500px;*/ /* عرض الصفحة 500 بكسل */
+/*margin: auto;*/ /* توسيط الصفحة */
+/*font-family: Arial, sans-serif;
+    font-size: 14px;*/ /* حجم الخط مناسب */
+/*border: 1px solid #ccc;*/ /* لإضافة إطار */
+/*padding: 20px;*/ /* إضافة مسافة داخلية */
+/*}*/
+
+/*h1, h2, h3 {
+    text-align: center;
+    margin: 5px 0;
+}
+
+.invoice-header, .invoice-footer {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.invoice-details {
+    margin-bottom: 20px;
+}
+
+    .invoice-details th, .invoice-details td {
+        padding: 5px;
+        text-align: left;
+    }
+
+    .invoice-details th {
+        border-bottom: 1px solid #000;
+    }
+
+.totals {
+    margin-top: 10px;
+}
+
+    .totals div {
+        margin-bottom: 5px;
+    }
+
+@media print {
+    body {
+        width: auto;
+        margin: 0;
+    }
+}*/
+
+/* Basic styling for invoice print */
+/*@page {
+    size: 500px auto;*/ /* Set the size of the page */
+/*margin: 0;*/ /* Remove default margins */
+/*}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 10px;
+    width: 500px;*/ /* Set the width to match page size */
+/*box-sizing: border-box;*/ /* Include padding in the width */
+/*}
+
+.invoice-info p {
+    margin: 5px 0;
+}
+
+.invoice-details {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+    .invoice-details th, .invoice-details td {
+        border: 1px solid #ddd;
+        padding: 5px;
+        text-align: center;
+    }
+
+    .invoice-details th {
+        background-color: #f2f2f2;
+    }
+
+.totals {
+    margin-top: 10px;
+}
+
+    .totals div {
+        margin-bottom: 5px;
+    }*/
+@page {
+    size: 80mm auto; /* Size suitable for receipt printers */
+    margin: 0; /* Remove default margins */
+}

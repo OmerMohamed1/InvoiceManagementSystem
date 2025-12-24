@@ -1,0 +1,278 @@
+﻿@media print {
+    .invoice-container {
+        max-width: 40%;
+        margin: 0;
+        padding: 10px;
+        /*border: 1px solid #ddd;*/
+        height: 100vh;
+    }
+
+    /* تحديد حجم الورقة للطباعة */
+    @page {
+        size: A4; /* حجم الورقة */
+        margin: 10mm; /* هوامش الورقة */
+    }
+
+    /* إزالة التمرير في الطباعة */
+    html, body {
+        height: auto;
+        overflow: visible !important; /* تأكد من إزالة التمرير */
+    }
+
+    /* منع التمرير داخل الفاتورة */
+    .invoice-container {
+        max-height: 100vh;
+        overflow: hidden; /* إخفاء أي تمرير */
+        page-break-inside: avoid;
+        page-break-before: auto;
+        page-break-after: auto;
+    }
+
+    .invoice-container, table, p, h4 {
+        page-break-inside: avoid;
+    }
+
+    /* تقليل حجم النص والعناصر للطباعة */
+    body {
+        font-size: 12px;
+    }
+
+    .invoice-details p, .invoice-items th, .invoice-items td {
+        margin: 0;
+        padding: 5px;
+        font-size: 12px; /* حجم نص أصغر للطباعة */
+    }
+
+    /* تجنب تقسيم الجداول بين الصفحات */
+    .invoice-items, .totals {
+        page-break-inside: avoid;
+    }
+
+    /* إخفاء أي عناصر غير ضرورية مثل الأزرار */
+    .btn, .no-print {
+        display: none;
+    }
+
+    .invoice-items table, .invoice-items th, .invoice-items td {
+        page-break-inside: avoid; /* تجنب تقسيم الجدول */
+    }
+
+    .invoice-details, .totals {
+        page-break-inside: avoid; /* تجنب تقسيم التفاصيل */
+    }
+
+    .invoice-header {
+        justify-content: space-between;
+        /* align-items: center;*/
+    }
+
+    hr {
+        border-top: 1px solid #000; /* تأكيد ظهور الخط الفاصل في الطباعة */
+    }
+
+    .code {
+        margin-right: 10px;
+    }
+
+    .qr-code {
+        margin-left: 40px;
+    }
+
+    .btn, .invoice-footer {
+        display: none; /* إخفاء الأزرار في الطباعة */
+    }
+}
+
+
+.invoice-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    height: 100%;
+    /*box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);*/ /* لإضافة تأثير ظل */
+}
+
+.invoice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+    .invoice-header img {
+        width: 90px;
+        height: auto;
+    }
+
+.qr-code {
+    margin-left: 20px; /* تباعد بين QR والشعار */
+}
+
+
+
+.qr-code-image {
+    width: 80px;
+    height: 80px;
+}
+
+.invoice-details {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+    .invoice-details p {
+        margin: 0;
+        font-size: 1em;
+    }
+
+.invoice-items table {
+    width: 100%;
+    margin-bottom: 20px;
+    font-size: 0.9em;
+}
+
+.invoice-items th, .invoice-items td {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ddd; /* تأكيد وجود الحدود */
+}
+
+.totals {
+    text-align: right;
+    margin-top: 20px;
+}
+
+    .totals p {
+        font-size: 1.2em;
+        font-weight: 400;
+    }
+
+.invoice-footer {
+    margin-top: 30px;
+    text-align: center;
+}
+
+/* التنسيق الخاص بالطباعة */
+
+
+
+
+
+
+
+/*@media print {
+    body {
+        height: auto;
+        margin: 0;*/ /* Remove margins to ensure all content fits */
+/*}
+
+    .invoice-container {
+        width: 100%;
+        padding: 10px;
+    }*/
+
+/* Adjust font size for print */
+/*.invoice-details p, .totals p, .qr-code p {
+        font-size: 12px;*/ /*Slightly smaller text for fitting data */
+/*}*/
+
+
+
+/*.invoice-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 3px;
+        margin-bottom: 3px;
+    }*/
+/* Smaller margins around the document */
+/*@page {
+        size: A4;
+        margin: 10mm;
+    }
+}*/
+
+/*@page {
+    size: A4;
+    margin: 10mm;
+}*/
+
+/*.invoice-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    font-family: Arial, sans-serif;
+    box-sizing: border-box;
+}
+
+.invoice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;*/
+/* border-bottom: 2px solid #ddd;*/
+/*padding-bottom: 3px;
+    margin-bottom: 3px;
+}
+
+.logok {
+    max-width: 60px;
+    height: auto;
+}
+
+.header-details {
+    text-align: right;
+    flex: 1;
+}
+
+    .header-details h3 {
+        margin: 0;
+    }
+
+.invoice-items {
+    margin-top: 20px;
+}
+
+    .invoice-items table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .invoice-items th, .invoice-items td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .invoice-items th {
+        background-color: #f4f4f4;
+    }
+
+.totals {
+    text-align: right;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+.invoice-footer {
+    margin-top: 20px;
+    text-align: center;
+}
+
+    .invoice-footer .btn {
+        margin: 0 5px;
+    }
+
+.qr-code {
+    text-align: center;
+    margin: 20px 0;
+}
+
+    .qr-code img {
+        width: 150px;
+        height: 150px;
+    }*/

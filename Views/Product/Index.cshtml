@@ -1,0 +1,243 @@
+﻿@using InvoiceManagementSystem.Models
+@model IEnumerable<Product>
+
+@{
+    ViewData["Title"] = "Product List";
+}
+
+<!-- Modal Add -->
+<div class="modal fade" id="createProductModal" tabindex="-1" aria-labelledby="createProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createProductModalLabel">Create New Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">   <span aria-hidden="true"></span> </button>
+            </div>
+            <div class="modal-body">
+                <!-- سيتم تحميل النموذج هنا بواسطة AJAX -->
+                <div id="createProductContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="createProductForm" class="btn btn-primary">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit -->
+<div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productModalLabel">Edit Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- سيتم تحميل النموذج هنا بواسطة AJAX -->
+                <div id="editModalContent"></div>
+            </div>
+            <div class="modal-footer">
+
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="editProductForm" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Details -->
+<div class="modal fade" id="detailsProductModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productModalLabel">Delails Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- سيتم تحميل النموذج هنا بواسطة AJAX -->
+                <div id="detailsModalContent"></div>
+            </div>
+            <div class="modal-footer">
+
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                @*<button type="submit" form="editProductForm" class="btn btn-primary">Save changes</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!--  IndexPage -->
+<div class="container mt-5 ">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-gradient text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0 text-primary">Products List</h4>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createProductModal"><i class="fas fa-plus"></i> Add New Product</button>
+        </div>
+        <div class="card-body">
+            <div id="productsTableContainer">
+                @await Html.PartialAsync("_ProductTablePartial", Model)
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/DeleteProductSweet.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+     // دالة تحديث الجدول بعد إضافة أو تعديل الفاتورة
+     function updateTable() {
+         $.ajax({
+             url: '/Product/LoadProductsPartial',
+             type: 'GET',
+             success: function (data) {
+                 $('#productsTableContainer').html(data);
+             },
+             error: function (xhr, status, error) {
+                 alert.error('Error updating table:', error);
+             }
+         });
+     }
+
+                              //الاضافـة
+     //===================================================================================//
+
+
+            $('#createProductModal').on('show.bs.modal', function () {
+         $.ajax({
+               url: '@Url.Action("Create", "Product")',
+             type: 'GET',
+             success: function (data) {
+                 $('#createProductContent').html(data);
+             },
+             error: function () {
+                 alert.error("Failed to load the create Product form.");
+             }
+         });
+     });
+
+
+            $(document).on('submit', '#createProductForm', function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: $(this).serialize(),
+            success: function (response) {
+                if (response.success) {
+                    $('#createProductModal').modal('hide');
+                    if (response.message) {
+                        toastr.success(response.message); // عرض رسالة النجاح
+                    }
+                    updateTable();
+                } else {
+                    alert(response.errorMessage);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error during form submission: ', error);
+                alert('Error during form submission. Please check the console for details.');
+                    }
+                });
+
+                // التأكد من إزالة كافة التأثيرات بشكل إضافي في حال بقاء الجمود
+                $(document).on('hidden.bs.modal', function () {
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open');
+                    $('body').css('overflow', '');
+                    $('body').css('padding-right', '');
+                });
+            });
+
+
+                                     //التعديـــــــل
+     //===================================================================================//
+
+
+            $(document).on('click', '.editProductBtn', function () {
+         var productId = $(this).data('id');
+
+         $.ajax({
+            url: '@Url.Action("Edit", "Product")',
+             type: 'GET',
+             data: { id: productId },
+             success: function (data) {
+                 $('#editModalContent').html(data);
+                 $('#editProductModal').modal('show');
+             },
+             error: function (xhr, status, error) {
+                 alert.error('Error loading form: ', error);
+             }
+         });
+     });
+
+
+            $(document).on('submit', '#editProductForm', function (e) {
+         e.preventDefault();
+
+         $.ajax({
+             url: $(this).attr('action'),
+             type: 'POST',
+             data: $(this).serialize(),
+             success: function (response) {
+                 if (response.success) {
+                     $('#editProductModal').modal('hide');
+                     if (response.message) {
+                         toastr.success(response.message); // عرض رسالة النجاح
+                     }
+                     updateTable();
+                 } else {
+                     alert(response.errorMessage);
+                 }
+             },
+             error: function (xhr, status, error) {
+                 console.error('Error during form submission: ', error);
+                 console.log(xhr.responseText); 
+                 alert('Error during form submission. Please check the console for details.');
+             }
+         });
+            });
+
+                            //Delails
+//===================================================================================//
+
+
+            $(document).on('click', '.detailsProductBtn', function () {
+    var productId = $(this).data('id');
+
+        $.ajax({
+           url: '@Url.Action("Details", "Product")',
+            type: 'GET',
+            data: { id: productId },
+            success: function (data) {
+                $('#detailsModalContent').html(data);
+                $('#detailsProductModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                alert.error('Error loading form: ', error);
+            }
+        });
+        });
+
+         setTimeout(function () {
+             updateTable();
+         }, 500);
+
+ });
+
+    </script>
+}
+
